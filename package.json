@@ -5,7 +5,8 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "rimraf dist && tsc -p tsconfig.json",
+    "prebuild": "rimraf dist",
+    "build": "tsc -p tsconfig.json",
     "lint-staged": "lint-staged",
     "prepare": "husky install",
     "prepublish": "npm run build && npm run format"
@@ -28,6 +29,7 @@
     "@types/mustache": "^4.2.2",
     "@types/node": "^20.4.1",
     "@types/react": "^18.2.14",
+    "@types/react-dom": "^18.2.6",
     "@typescript-eslint/eslint-plugin": "^5.61.0",
     "eslint": "^8.44.0",
     "eslint-config-prettier": "^8.8.0",
@@ -36,13 +38,13 @@
     "eslint-plugin-n": "^15.7.0",
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-react": "^7.32.2",
+    "husky": "^8.0.0",
     "lint-staged": "^13.2.3",
     "next": "^13.4.9",
     "prettier": "^3.0.0",
     "react": "^18.2.0",
     "rimraf": "^5.0.1",
-    "typescript": "^5.1.6",
-    "husky": "^8.0.0"
+    "typescript": "^5.1.6"
   },
   "peerDependencies": {
     "next": "^13.4.9",
