@@ -7,10 +7,9 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "tsc -p tsconfig.json",
-    "format": "prettier --write .",
     "lint-staged": "lint-staged",
     "prepare": "husky install",
-    "prepublish": "npm run build && npm run format"
+    "prepublish": "npm run build"
   },
   "keywords": [
     "next.js",
