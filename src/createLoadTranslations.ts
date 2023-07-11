@@ -1,36 +1,21 @@
 import fastGlob, { convertPathToPattern } from 'fast-glob';
-import { unflatten } from 'flat';
-import { readFile } from 'fs/promises';
 import { get, merge, set } from 'lodash-es';
 import { resolve } from 'path';
+import loadJSON from './helpers/loadJSON';
 import { type Translations } from './types/Translations';
-
-async function loadJSONFile(path: string): Promise<object> {
-  return await readFile(path, 'utf-8')
-    .then((content) => JSON.parse(content))
-    .then((data) => unflatten(data));
-}
-
-function resolveObjectPath(path: string, file: string): string {
-  return file
-    .replace(path, '')
-    .replace(/\.json$/i, '')
-    .substring(1)
-    .replace('/', '.');
-}
 
 async function loadTranslations(
   segments: string[],
   locale: string,
 ): Promise<Translations> {
   const path = convertPathToPattern(resolve(process.cwd(), ...segments));
-  const pattern = convertPathToPattern(resolve(path, '**', '*.json'));
+  const pattern = convertPathToPattern(resolve(path, locale, '**', '*.json'));
   const files = await fastGlob(pattern);
   const contents = await Promise.all(
     files.map(
       async (file) =>
-        await loadJSONFile(file).then((content) => ({
-          path: resolveObjectPath(path, file),
+        await loadJSON(file).then((content) => ({
+          path: file.slice(1, -5).replace(path, '').replace(/\//g, '.'),
           content,
         })),
     ),
@@ -40,7 +25,7 @@ async function loadTranslations(
     {},
   );
 
-  return get(result, locale);
+  return result;
 }
 
 export function createLoadTranslations(...segments: string[]) {
