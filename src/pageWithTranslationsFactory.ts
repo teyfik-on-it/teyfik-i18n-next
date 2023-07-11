@@ -1,14 +1,14 @@
-import { get, isNull, isUndefined, merge, set } from 'lodash';
+import { get, isNull, isUndefined, merge, set } from 'lodash-es';
 import {
   type GetStaticProps,
   type GetStaticPropsContext,
   type PreviewData,
 } from 'next';
 import { type ParsedUrlQuery } from 'querystring';
-import { type Translations } from './types/Translations';
+import { type TranslationLoader } from './types/TranslationLoader';
 
-export function createPageWithTranslations(
-  loadTranslations: (locale: string) => Translations | Promise<Translations>,
+export function pageWithTranslationsFactory<T extends TranslationLoader>(
+  loader: T,
 ) {
   return function _<
     Props extends Record<string, any> = Record<string, any>,
@@ -29,20 +29,20 @@ export function createPageWithTranslations(
         namespaces = namespaces.split(/\s+/);
       }
 
-      const translations = await loadTranslations(gspContext.locale as string);
+      const translations = await loader.load(gspContext.locale as string);
       const i18n = namespaces.reduce((p, c) => {
-        const left = get(p, c);
-        const right = get(translations, c);
+        const target = get(p, c);
+        const source = get(translations, c);
 
-        if (isNull(right) || isUndefined(right)) {
+        if (isNull(source) || isUndefined(source)) {
           return p;
         }
 
-        if (isNull(left) || isUndefined(left)) {
-          return set(p, c, right);
+        if (isNull(target) || isUndefined(target)) {
+          return set(p, c, source);
         }
 
-        return set(p, c, merge(left, right));
+        return set(p, c, merge(target, source));
       }, {});
 
       if (getStaticProps != null) {
