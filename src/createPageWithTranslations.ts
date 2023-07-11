@@ -1,4 +1,4 @@
-import { get, isNull, isUndefined, merge, set } from 'lodash-es';
+import { get, isNull, isUndefined, merge, set } from 'lodash';
 import {
   type GetStaticProps,
   type GetStaticPropsContext,

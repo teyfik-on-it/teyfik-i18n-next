@@ -1,4 +1,4 @@
-import { get, isObject } from 'lodash-es';
+import { get, isObject } from 'lodash';
 import Mustache from 'mustache';
 import { useCallback } from 'react';
 import { type Translate } from './types/Translate';

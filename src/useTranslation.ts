@@ -1,4 +1,4 @@
-import { isObject } from 'lodash-es';
+import { isObject } from 'lodash';
 import { useCallback, useContext } from 'react';
 import { Context, type IContext } from './Context';
 import { getType } from './helpers/getType';

@@ -1,5 +1,5 @@
 import fastGlob, { convertPathToPattern } from 'fast-glob';
-import { get, merge, set } from 'lodash-es';
+import { get, merge, set } from 'lodash';
 import { resolve } from 'path';
 import loadJSON from './helpers/loadJSON';
 import { type Translations } from './types/Translations';
