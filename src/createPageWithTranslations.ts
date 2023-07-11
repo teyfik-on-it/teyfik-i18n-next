@@ -1,4 +1,4 @@
-import { get, merge, set } from 'lodash-es';
+import { get, isNull, isUndefined, merge, set } from 'lodash-es';
 import {
   type GetStaticProps,
   type GetStaticPropsContext,
@@ -34,11 +34,15 @@ export function createPageWithTranslations(
         const left = get(p, c);
         const right = get(translations, c);
 
-        if (left !== undefined) {
-          return set(p, c, merge(left, right));
+        if (isNull(right) || isUndefined(right)) {
+          return p;
         }
 
-        return set(p, c, right);
+        if (isNull(left) || isUndefined(left)) {
+          return set(p, c, right);
+        }
+
+        return set(p, c, merge(left, right));
       }, {});
 
       if (getStaticProps != null) {
