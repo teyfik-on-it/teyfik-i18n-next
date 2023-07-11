@@ -6,6 +6,8 @@ dynamic content translation, and more. Reach a global audience effortlessly.
 
 ## Usage
 
+### Next.js configuration
+
 Configure your i18n settings in next.config.js:
 
 ```js
@@ -20,16 +22,52 @@ const nextConfig = {
 module.exports = nextConfig;
 ```
 
-Create a function called `loadTranslations` that returns all the translations
-for specified locale. `loadTranslations` function must take only one argument
-called `locale`.
+### Translation loaders
 
-Example return value can be:
+`teyfik-i18n-next` uses the specified loader for loading translations from disk
+or from a remote location. You can use the default `JSONLoader` or `YAMLLoader`
+if they fit your specific use case. Alternatively, you can create your own
+loader by implementing the `TranslationLoader` interface. In any case, your
+translation loader should return all the translations for the specified locale.
+
+1. Using `JSONLoader`
+
+```ts
+import { JSONLoader } from 'teyfik-i18n-next';
+
+const loader = new JSONLoader('path', 'to', 'locales');
+```
+
+2. Using `YAMLLoader`
+
+```ts
+import { YAMLLoader } from 'teyfik-i18n-next';
+
+const loader = new YAMLLoader('path', 'to', 'locales');
+```
+
+3. Creating a custom loader
+
+```ts
+import { TranslationLoader } from 'teyfik-i18n-next';
+
+class HttpLoader implements TranslationLoader {
+  load(locale: string) {
+    return fetch(`https://example.com/locales/${locale}.json`).then((res) =>
+      res.json(),
+    );
+  }
+}
+```
+
+The loader's return value should return all translations for the specified
+locale, as shown in the example below:
 
 ```json
 {
   "common": {
-    "title": "Hello world!"
+    "title": "Hello world!",
+    "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit..."
   },
   "index": {
     "title": "Home"
@@ -40,65 +78,35 @@ Example return value can be:
 }
 ```
 
-You can use default `createLoadTranslations` helper if you're using local JSON
-files for translation.
+If you are using JSONLoader or YAMLLoader, your folder structure should be
+similar to the following:
 
-Translations for `en` locale
-
-`public/locales/en/common.json`
-
-```json
-{
-  "title": "Hello world!"
-}
+```
+.
+└── path
+  └── to
+    └── locales
+      ├── en
+      | └── common.json
+      └── de
+        └── common.json
 ```
 
-Translations for `de` locale
+### Creating the `pageWithTranslations` helper
 
-`public/locales/de/common.json`
-
-```json
-{
-  "title": "Hallo Welt!"
-}
-```
-
-`createLoadTranslations` helper usage:
+After you initialize a loader, you should use it with
+`pageWithTranslationsFactory`
 
 ```ts
-import { createLoadTranslations } from 'teyfik-i18n-next';
+import { JSONLoader, pageWithTranslationsFactory } from 'teyfik-i18n-next';
 
-export const loadTranslations = createLoadTranslations('public', 'locales');
+const loader = new JSONLoader('path', 'to', 'locales');
+const pageWithTranslations = pageWithTranslationsFactory(loader);
+
+export default pageWithTranslations;
 ```
 
-Example translations that comes from `loadTranslations('en')`
-
-```json
-{
-  "common": {
-    "title": "Hello world!"
-  }
-}
-```
-
-Also you can define your custom `loadTranslations` function such as:
-
-```ts
-export const loadTranslations = (locale: string) =>
-  fetch(`https://example.com/locales/${locale}.json`);
-```
-
-Create another function that will be used in pages to provide translations.
-
-```ts
-import { createPageWithTranslations } from 'teyfik-i18n-next';
-import { loadTranslations } from './loadTranslations';
-
-export const pageWithTranslations =
-  createPageWithTranslations(loadTranslations);
-```
-
-Use `pageWithTranslations` helper in pages
+Later on, use the `pageWithTranslations` helper in pages
 
 ```tsx
 import { useTranslation } from 'teyfik-i18n-next';
@@ -125,7 +133,8 @@ export const getStaticProps = pageWithTranslations('common', (context) => {
 });
 ```
 
-Wrap your app with `I18nProvider`
+Finally, wrap your app with `I18nProvider`. In the example below, `i18n` prop
+comes from `pageWithTranslations` helper that we used with `getStaticProps`.
 
 ```tsx
 import type { AppProps } from 'next/app';
