@@ -1,32 +1,70 @@
-import { isObject } from 'lodash';
-import { useCallback, useContext } from 'react';
-import { Context, type IContext } from './Context';
-import { getType } from './helpers/getType';
-import { type Translate } from './types/Translate';
+import { get, isObject } from 'lodash';
+import Mustache from 'mustache';
+import { useCallback } from 'react';
+import { useI18n } from './I18nProvider';
 
-export function useTranslation(prefix?: string): IContext {
-  const { t: $t } = useContext(Context) ?? {};
+export class TranslationError extends Error {}
 
-  if ($t == null) {
-    throw new Error('useTranslation must be used under appWithtranslations');
-  }
-
-  const t = useCallback<Translate>(
-    (path, context?) => {
+export default function useTranslation(prefix?: string): {
+  t: <T extends object>(path: string, context?: T) => string;
+} {
+  const { i18n } = useI18n();
+  const t = useCallback(
+    <T extends { key: string }, U extends object>(
+      path: string | T,
+      context?: U,
+    ) => {
       if (isObject(path)) {
         path = path.key;
       }
 
-      if (typeof path !== 'string') {
-        throw new Error(`Expected path to be string, given: ${getType(path)}`);
+      if (typeof prefix === 'string') {
+        path = prefix + '.' + path;
       }
 
-      return $t(
-        typeof prefix === 'string' ? prefix + '.' + path : path,
-        context,
+      if (isObject(context)) {
+        if ('answer' in context && typeof context.answer === 'boolean') {
+          if (context.answer) {
+            path += '.yes';
+          } else {
+            path += '.no';
+          }
+        }
+
+        if ('count' in context && typeof context.count === 'number') {
+          if (context.count === 0) {
+            path += '.zero';
+          } else if (context.count === 1) {
+            path += '.one';
+          } else {
+            path += '.other';
+          }
+        }
+      }
+
+      const template = get(i18n, path) ?? path;
+
+      if (template === path) {
+        console.warn('Missing translation: ' + path);
+      }
+
+      if (typeof template === 'string') {
+        return Mustache.render(
+          template,
+          context,
+          {},
+          // React already escapes dangerous values
+          { escape: String },
+        );
+      }
+
+      throw new TranslationError(
+        `Resolved value for path is ${typeof template}: ${JSON.stringify(
+          template,
+        )}`,
       );
     },
-    [$t, prefix],
+    [prefix, i18n],
   );
 
   return { t };
