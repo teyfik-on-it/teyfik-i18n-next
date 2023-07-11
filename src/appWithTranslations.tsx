@@ -1,13 +1,11 @@
 import { type AppProps } from 'next/app';
-import React, { type ReactElement } from 'react';
+import React from 'react';
 import { Context } from './Context';
 import { useT } from './useT';
 
-type AppComponent = (props: AppProps) => ReactElement;
-
 export function appWithTranslations(
   AppComponent: React.ComponentType<AppProps>,
-): AppComponent {
+): React.ComponentType<AppProps> {
   return function AppWithTranslations(props) {
     // eslint-disable-next-line react/prop-types
     const { i18n } = props.pageProps;
