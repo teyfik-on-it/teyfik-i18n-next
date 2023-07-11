@@ -1,4 +1,4 @@
-import { get, merge, set } from 'lodash-es';
+import { get, merge, set } from 'lodash';
 import { resolve } from 'path';
 import { type TranslationLoader } from '../types/TranslationLoader';
 import { type Translations } from '../types/Translations';

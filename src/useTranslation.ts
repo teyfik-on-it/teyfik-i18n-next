@@ -1,4 +1,4 @@
-import { get, isObject } from 'lodash-es';
+import { get, isObject } from 'lodash';
 import Mustache from 'mustache';
 import React from 'react';
 import { useCtx } from './I18nProvider';
