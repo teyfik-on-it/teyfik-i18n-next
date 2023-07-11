@@ -1,6 +1,6 @@
 {
   "name": "teyfik-i18n-next",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Seamless i18n integration for Next.js. Manage locales, route localization, dynamic content translation, and more. Reach a global audience effortlessly. #Nextjs #i18n",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
