@@ -5,7 +5,7 @@ import { useI18n } from './I18nProvider';
 
 export class TranslationError extends Error {}
 
-export default function useTranslation(prefix?: string): {
+export function useTranslation(prefix?: string): {
   t: <T extends object>(path: string, context?: T) => string;
 } {
   const { i18n } = useI18n();
