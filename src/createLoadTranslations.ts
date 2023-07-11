@@ -8,14 +8,16 @@ async function loadTranslations(
   segments: string[],
   locale: string,
 ): Promise<Translations> {
-  const path = convertPathToPattern(resolve(process.cwd(), ...segments));
-  const pattern = convertPathToPattern(resolve(path, locale, '**', '*.json'));
+  const path = convertPathToPattern(
+    resolve(process.cwd(), ...segments, locale),
+  );
+  const pattern = convertPathToPattern(resolve(path, '**', '*.json'));
   const files = await fastGlob(pattern);
   const contents = await Promise.all(
     files.map(
       async (file) =>
         await loadJSON(file).then((content) => ({
-          path: file.slice(1, -5).replace(path, '').replace(/\//g, '.'),
+          path: file.replace(path, '').slice(1, -5).replace(/\//g, '.'),
           content,
         })),
     ),

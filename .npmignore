@@ -1,3 +1,8 @@
+.eslintignore
+.eslintrc.js
 .github
+.gitignore
 .husky
+.prettierrc
 src
+tsconfig.json
