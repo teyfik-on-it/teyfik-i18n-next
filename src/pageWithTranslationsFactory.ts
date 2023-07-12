@@ -7,9 +7,7 @@ import {
 import { type ParsedUrlQuery } from 'querystring';
 import { type TranslationLoader } from './types/TranslationLoader';
 
-export function pageWithTranslationsFactory<T extends TranslationLoader>(
-  loader: T,
-) {
+export function pageWithTranslationsFactory(loader: TranslationLoader) {
   return function _<
     Props extends Record<string, any> = Record<string, any>,
     Params extends ParsedUrlQuery = ParsedUrlQuery,
@@ -29,7 +27,7 @@ export function pageWithTranslationsFactory<T extends TranslationLoader>(
         namespaces = namespaces.split(/\s+/);
       }
 
-      const translations = await loader.load(gspContext.locale as string);
+      const translations = await loader(gspContext.locale as string);
       const i18n = namespaces.reduce((p, c) => {
         const target = get(p, c);
         const source = get(translations, c);

@@ -6,6 +6,20 @@ dynamic content translation, and more. Reach a global audience effortlessly.
 
 ## Usage
 
+### Installation
+
+Install `teyfik-i18n-next`
+
+```sh
+npm i teyfik-i18n-next
+```
+
+Install `teyfik-directory-loader` if you don't have a custom loader
+
+```sh
+npm i teyfik-directory-loader
+```
+
 ### Next.js configuration
 
 Configure your i18n settings in next.config.js:
@@ -22,45 +36,43 @@ const nextConfig = {
 module.exports = nextConfig;
 ```
 
-### Translation loaders
+### Initializing `pageWithTranslations` helper
 
-`teyfik-i18n-next` uses the specified loader for loading translations from disk
-or from a remote location. You can use the default `JSONLoader` or `YAMLLoader`
-if they fit your specific use case. Alternatively, you can create your own
-loader by implementing the `TranslationLoader` interface. In any case, your
-translation loader should return all the translations for the specified locale.
+`teyfik-i18n-next` uses a function called `pageWithTranslationsFactory` to
+create a helper function to use in every page of the app. The factory function
+takes a single argument called loader, and the loader function takes a single
+argument called locale then returns all the translations for given locale.
 
-1. Using `JSONLoader`
+1. Using `teyfik-directory-loader`
 
-```ts
-import { JSONLoader } from 'teyfik-i18n-next/dist/loaders/JSONLoader';
-
-const loader = new JSONLoader('path', 'to', 'locales');
-```
-
-2. Using `YAMLLoader`
+With the help of `teyfik-directory-loader`, you can load every JSON and YAML
+files in a specific directory keeping folder structure. Read more about the
+package [here](https://github.com/teyfik-on-it/teyfik-directory-loader#readme)
 
 ```ts
-import { YAMLLoader } from 'teyfik-i18n-next/dist/loaders/YAMLLoader';
+import directoryLoader from 'teyfik-directory-loader';
+import { pageWithTranslations } from 'teyfik-i18n-next';
 
-const loader = new YAMLLoader('path', 'to', 'locales');
+const pageWithTranslations = pageWithTranslationsFactory((locale) =>
+  directoryLoader('public', 'locales', locale),
+);
+
+export default pageWithTranslations;
 ```
 
-3. Creating a custom loader
+2. Using a custom loader
 
 ```ts
-import { TranslationLoader } from 'teyfik-i18n-next';
+import { pageWithTranslations } from 'teyfik-i18n-next';
 
-class HttpLoader implements TranslationLoader {
-  load(locale: string) {
-    return fetch(`https://example.com/locales/${locale}.json`).then((res) =>
-      res.json(),
-    );
-  }
-}
+const pageWithTranslations = pageWithTranslationsFactory((locale) =>
+  fetch(`https://example.com/locales/${locale}.json`),
+);
+
+export default pageWithTranslations;
 ```
 
-The loader's return value should return all translations for the specified
+The loader's return value should return all the translations for the given
 locale, as shown in the example below:
 
 ```json
@@ -78,8 +90,8 @@ locale, as shown in the example below:
 }
 ```
 
-If you are using JSONLoader or YAMLLoader, your folder structure should be
-similar to the following:
+If you prefer to use `teyfik-directory-loader`, your directory structure should
+be similar to the following:
 
 ```
 .
@@ -92,22 +104,10 @@ similar to the following:
         └── common.json
 ```
 
-### Creating the `pageWithTranslations` helper
+### Using the `pageWithTranslations` helper
 
-After you initialize a loader, you should use it with
-`pageWithTranslationsFactory`
-
-```ts
-import { pageWithTranslationsFactory } from 'teyfik-i18n-next';
-import { JSONLoader } from 'teyfik-i18n-next/dist/loaders/JSONLoader';
-
-const loader = new JSONLoader('path', 'to', 'locales');
-const pageWithTranslations = pageWithTranslationsFactory(loader);
-
-export default pageWithTranslations;
-```
-
-Later on, use the `pageWithTranslations` helper in pages
+After you initialize a loader and defined `pageWithTranslations` helper you
+should use it in your pages to load translations:
 
 ```tsx
 import { useTranslation } from 'teyfik-i18n-next';
@@ -132,6 +132,12 @@ export const getStaticProps = pageWithTranslations('common', (context) => {
     props: {},
   };
 });
+```
+
+You can define filtered namespaces on property level such as:
+
+```ts
+export const getStaticProps = pageWithTranslations('common.title');
 ```
 
 Finally, wrap your app with `I18nProvider`. In the example below, `i18n` prop
