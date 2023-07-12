@@ -33,7 +33,7 @@ translation loader should return all the translations for the specified locale.
 1. Using `JSONLoader`
 
 ```ts
-import { JSONLoader } from 'teyfik-i18n-next';
+import { JSONLoader } from 'teyfik-i18n-next/dist/loaders/JSONLoader';
 
 const loader = new JSONLoader('path', 'to', 'locales');
 ```
@@ -41,7 +41,7 @@ const loader = new JSONLoader('path', 'to', 'locales');
 2. Using `YAMLLoader`
 
 ```ts
-import { YAMLLoader } from 'teyfik-i18n-next';
+import { YAMLLoader } from 'teyfik-i18n-next/dist/loaders/YAMLLoader';
 
 const loader = new YAMLLoader('path', 'to', 'locales');
 ```
