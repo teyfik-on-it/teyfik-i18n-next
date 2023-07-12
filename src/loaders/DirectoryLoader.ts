@@ -1,3 +1,4 @@
+import { unflatten } from 'flat';
 import { get, merge, set } from 'lodash';
 import { resolve } from 'path';
 import { type TranslationLoader } from '../types/TranslationLoader';
@@ -22,10 +23,11 @@ export abstract class DirectoryLoader implements TranslationLoader {
     const pattern = slash(resolve(root, '**', this.matcher));
     const files = await glob(pattern);
     const contents = await Promise.all(
-      files.map(
+      files.sort().map(
         async (file) =>
           await readFile(file, 'utf-8')
             .then((raw) => this.parse(raw))
+            .then((data) => unflatten(data))
             .then(
               (data) =>
                 [
