@@ -4,11 +4,10 @@ import { type TranslationLoader } from '../types/TranslationLoader';
 import { type Translations } from '../types/Translations';
 
 export abstract class DirectoryLoader implements TranslationLoader {
-  readonly segments: string[];
-
-  constructor(...segments: string[]) {
-    this.segments = segments;
-  }
+  constructor(
+    readonly matcher: string,
+    readonly segments: string[],
+  ) {}
 
   abstract parse(input: string): any;
 
@@ -20,7 +19,7 @@ export abstract class DirectoryLoader implements TranslationLoader {
         import('slash'),
       ]);
     const root = slash(resolve(process.cwd(), ...this.segments, locale));
-    const pattern = slash(resolve(root, '**', '*.json'));
+    const pattern = slash(resolve(root, '**', this.matcher));
     const files = await glob(pattern);
     const contents = await Promise.all(
       files.map(
@@ -37,7 +36,7 @@ export abstract class DirectoryLoader implements TranslationLoader {
       ),
     );
     const result = contents.reduce(
-      (p, [path, data]) => set(p, path, merge(get(p, path, data))),
+      (p, [path, data]) => set(p, path, merge(get(p, path), data)),
       {},
     );
 
