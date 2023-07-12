@@ -13,17 +13,15 @@ export abstract class DirectoryLoader implements TranslationLoader {
   abstract parse(input: string): any;
 
   async load(locale: string): Promise<Translations> {
-    const [fastGlob, readFile] = await Promise.all([
-      import('fast-glob').then(($) => $.default),
-      import('fs/promises').then(($) => $.readFile),
-    ]);
-    const root = fastGlob.convertPathToPattern(
-      resolve(process.cwd(), ...this.segments, locale),
-    );
-    const pattern = fastGlob.convertPathToPattern(
-      resolve(root, '**', '*.json'),
-    );
-    const files = await fastGlob(pattern);
+    const [{ default: glob }, { readFile }, { default: slash }] =
+      await Promise.all([
+        import('glob-promise'),
+        import('fs/promises'),
+        import('slash'),
+      ]);
+    const root = slash(resolve(process.cwd(), ...this.segments, locale));
+    const pattern = slash(resolve(root, '**', '*.json'));
+    const files = await glob(pattern);
     const contents = await Promise.all(
       files.map(
         async (file) =>

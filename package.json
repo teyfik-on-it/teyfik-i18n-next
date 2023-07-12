@@ -1,6 +1,6 @@
 {
   "name": "teyfik-i18n-next",
-  "version": "0.0.10",
+  "version": "0.0.25",
   "description": "Seamless i18n integration for Next.js. Manage locales, route localization, dynamic content translation, and more. Reach a global audience effortlessly. #Nextjs #i18n",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -18,11 +18,13 @@
   "author": "teyfik-on-it",
   "license": "MIT",
   "dependencies": {
-    "fast-glob": "^3.3.0",
     "flat": "^5.0.2",
+    "glob": "^8.1.0",
+    "glob-promise": "^6.0.3",
     "lodash": "^4.17.21",
     "mustache": "^4.2.0",
     "parse-json": "^7.0.0",
+    "slash": "^5.1.0",
     "yaml": "^2.3.1"
   },
   "devDependencies": {
@@ -41,8 +43,10 @@
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-react": "^7.32.2",
     "husky": "^8.0.0",
+    "i": "^0.3.7",
     "lint-staged": "^13.2.3",
     "next": "^13.4.9",
+    "npm": "^9.8.0",
     "prettier": "^3.0.0",
     "react": "^18.2.0",
     "rimraf": "^5.0.1",

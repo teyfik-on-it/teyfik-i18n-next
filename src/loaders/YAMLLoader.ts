@@ -1,6 +1,7 @@
-import { parse } from 'yaml';
 import { DirectoryLoader } from './DirectoryLoader';
 
 export class YAMLLoader extends DirectoryLoader {
-  parse = parse;
+  async parse(input: string): Promise<any> {
+    return await import('yaml').then(($) => $.parse(input));
+  }
 }

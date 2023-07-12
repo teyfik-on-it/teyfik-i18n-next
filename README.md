@@ -98,7 +98,8 @@ After you initialize a loader, you should use it with
 `pageWithTranslationsFactory`
 
 ```ts
-import { JSONLoader, pageWithTranslationsFactory } from 'teyfik-i18n-next';
+import { pageWithTranslationsFactory } from 'teyfik-i18n-next';
+import { JSONLoader } from 'teyfik-i18n-next/dist/loaders/JSONLoader';
 
 const loader = new JSONLoader('path', 'to', 'locales');
 const pageWithTranslations = pageWithTranslationsFactory(loader);

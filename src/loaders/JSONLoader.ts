@@ -1,6 +1,7 @@
-import parse from 'parse-json';
 import { DirectoryLoader } from './DirectoryLoader';
 
 export class JSONLoader extends DirectoryLoader {
-  parse = parse;
+  async parse(input: string): Promise<any> {
+    return await import('parse-json').then(($) => $.default(input));
+  }
 }

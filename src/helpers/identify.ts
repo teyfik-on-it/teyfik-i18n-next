@@ -1,4 +1,4 @@
-export function getType(input: unknown): string {
+export function identify(input: unknown): string {
   let name = String(input);
   const type = typeof input;
 
